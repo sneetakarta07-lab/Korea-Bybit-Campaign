@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bybit 한국 - 지금 가입하세요</title>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C951YGC14W"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-C951YGC14W');
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -498,13 +506,36 @@ function startTimer() {
   }, 1000);
 }
 
+// ── Bidvertiser Macros پکڑیں ──
+function getParam(name) {
+  var url = new URLSearchParams(window.location.search);
+  return url.get(name) || 'unknown';
+}
+
+var BV_SRCID   = getParam('src');
+var BV_CLICKID = getParam('clickid');
+var BV_GEO     = getParam('geo');
+var BV_CITY    = getParam('city');
+var BV_CAMPID  = getParam('campid');
+
+// GA4 کو source بتائیں (page load پر)
+if (typeof gtag !== 'undefined') {
+  gtag('event', 'page_view_bv', {
+    'bv_source'  : BV_SRCID,
+    'bv_clickid' : BV_CLICKID,
+    'bv_geo'     : BV_GEO,
+    'bv_city'    : BV_CITY,
+    'bv_campid'  : BV_CAMPID
+  });
+}
+
 // ── Bot Detection ──
 var startTime = Date.now();
 var isReal = false;
 
 document.addEventListener('mousemove', function(){ isReal = true; });
 document.addEventListener('touchstart', function(){ isReal = true; });
-document.addEventListener('scroll', function(){ isReal = true; });
+document.addEventListener('scroll',     function(){ isReal = true; });
 
 // ── Click Track + Bot Block ──
 function trackClick() {
@@ -516,12 +547,15 @@ function trackClick() {
     return false;
   }
 
-  // GA4 tracking (اگر لگایا ہو)
+  // GA4 کو button click بتائیں + source کے ساتھ
   if (typeof gtag !== 'undefined') {
-    gtag('event', 'cta_click', {
-      'event_category': 'prelander',
-      'event_label': 'korea_bybit',
-      'time_spent': timeSpent
+    gtag('event', 'bybit_button_click', {
+      'bv_source'  : BV_SRCID,
+      'bv_clickid' : BV_CLICKID,
+      'bv_geo'     : BV_GEO,
+      'bv_city'    : BV_CITY,
+      'bv_campid'  : BV_CAMPID,
+      'time_spent' : timeSpent
     });
   }
   // Real user → Bybit جائے گا
